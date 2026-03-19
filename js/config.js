@@ -1,0 +1,2 @@
+window.CD_SUPABASE_URL = 'https://gqmspjxmewaggipirswx.supabase.co'
+window.CD_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdxbXNwanhtZXdhZ2dpcGlyc3d4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzMDk2MzgsImV4cCI6MjA4ODg4NTYzOH0.Sg-cvf09BSqzN4ctHd47yhFZSTDc1N4PoPThpcPmjSU'
