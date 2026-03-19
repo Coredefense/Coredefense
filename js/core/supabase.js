@@ -66,7 +66,7 @@
     const client = createClient(url, key, {
       auth: {
         persistSession: true,
-        autoRefreshToken: true,
+        autoRefreshToken: false,
         detectSessionInUrl: true,
         flowType: 'pkce',
         storageKey,
@@ -83,22 +83,13 @@
     try{
       const { data: sess } = await client.auth.getSession()
       const session = sess && sess.session ? sess.session : null
-      if(debug) console.log('[CD] supabase session', session)
+      if(debug) console.log('[CD] session inicial', session)
       if(debug) console.log('[CD] localStorage auth', {
         storageKey,
         hasCustom: !!localStorage.getItem(storageKey),
         defaultStorageKey,
         hasDefault: defaultStorageKey ? !!localStorage.getItem(defaultStorageKey) : false
       })
-      if(session){
-        const { data: userData, error: userErr } = await client.auth.getUser()
-        if(userErr){
-          if(debug) console.warn('[CD] supabase getUser error', userErr)
-          await client.auth.signOut()
-        } else if(debug) {
-          console.log('[CD] supabase user', userData && userData.user ? userData.user.id : null)
-        }
-      }
       client.auth.onAuthStateChange((event, session2) => {
         try{
           if(defaultStorageKey){

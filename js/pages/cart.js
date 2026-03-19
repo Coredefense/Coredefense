@@ -1,5 +1,29 @@
 (async () => {
   const debug = (new URLSearchParams(location.search).get('debug') === '1') || (localStorage.getItem('cd.debug') === '1')
+  try{
+    const originalAssign = window.location.assign.bind(window.location)
+    window.location.assign = function(url){
+      console.log('🚨 REDIRECT assign:', url)
+      console.trace('STACK TRACE REDIRECT')
+      return originalAssign(url)
+    }
+  }catch(_e){}
+  try{
+    const proto = Object.getPrototypeOf(window.location)
+    const hrefDesc = Object.getOwnPropertyDescriptor(proto, 'href')
+    if(hrefDesc && typeof hrefDesc.set === 'function'){
+      Object.defineProperty(proto, 'href', {
+        configurable: true,
+        enumerable: hrefDesc.enumerable,
+        get: function(){ return hrefDesc.get.call(this) },
+        set: function(url){
+          console.log('🚨 REDIRECT href:', url)
+          console.trace('STACK TRACE REDIRECT')
+          return hrefDesc.set.call(this, url)
+        }
+      })
+    }
+  }catch(_e){}
 
   function supa(){
     return window.CD_DB && window.CD_DB.client ? window.CD_DB.client : null
@@ -37,7 +61,10 @@
     const start = Date.now()
     while(Date.now() - start < timeoutMs){
       const { data: sess } = await s.auth.getSession()
-      if(sess && sess.session) return sess.session
+      const session = sess && sess.session ? sess.session : null
+      if(session) return session
+      const stored = hasStoredAuth()
+      if(debug && stored.any) console.log('[CD] waiting session hydration, storage present')
       await new Promise(r=>setTimeout(r, 120))
     }
     return null
@@ -159,32 +186,27 @@
     }
 
     try{
-      const { data: sess } = await s.auth.getSession()
-      if(debug) console.log('SESSION:', sess && sess.session ? sess.session : null)
       if(debug) console.log('[CD] comprar localStorage auth', hasStoredAuth())
       if(debug) console.log('CHECK STORAGE:', localStorage)
-      let sessionNow = sess && sess.session ? sess.session : null
-      const stored = hasStoredAuth()
-      if(!sessionNow && stored.any){
-        sessionNow = await waitSessionHydration(s, 1800)
-        if(debug) console.log('[CD] hydrated session after wait', sessionNow)
-      }
-      if(!sessionNow){
+      console.log('===== DEBUG SESSION START =====')
+      console.log('LOCALSTORAGE FULL:', localStorage)
+      const hasCustom = !!localStorage.getItem('cd-auth')
+      const hasSb = Object.keys(localStorage).some(k =>
+        k.startsWith('sb-') && k.endsWith('-auth-token') && !!localStorage.getItem(k)
+      )
+      console.log('HAS cd-auth:', hasCustom)
+      console.log('HAS sb token:', hasSb)
+      const hydrated = await waitSessionHydration(s, 3000)
+      console.log('HYDRATED SESSION:', hydrated)
+      const { data: rawSess } = await s.auth.getSession()
+      console.log('RAW getSession:', rawSess?.session || null)
+      if(debug) console.log('SESSION:', hydrated)
+      if(!hydrated){
         location.href = 'registro.html?next=comprar.html'
         return
       }
 
-      const { data: refreshed, error: refreshError } = await s.auth.refreshSession()
-      if(refreshError){
-        showPayState('Tu sesión no es válida. Inicia sesión de nuevo para continuar.')
-        location.href = 'registro.html?next=comprar.html'
-        return
-      }
-      const session = refreshed && refreshed.session ? refreshed.session : sessionNow
-      if(!session){
-        location.href = 'registro.html?next=comprar.html'
-        return
-      }
+      let session = hydrated
 
       const payloadItems = items.map((i)=>{
         const p = String(i.plan || '').trim().toLowerCase()
@@ -198,9 +220,14 @@
       const siteUrl = String(window.CD_SITE_URL || '').trim() || new URL('.', location.href).toString().replace(/\/$/, '')
       if(debug) console.log('[CD] checkout session', { user: session.user && session.user.id, items: payloadItems, siteUrl })
 
+      const { data: sess } = await s.auth.getSession()
+      const token = sess?.session?.access_token
       if(checkoutBtn) checkoutBtn.disabled = true
       const { data, error } = await s.functions.invoke('create-checkout-session', {
-        body: { items: payloadItems, site_url: siteUrl }
+        body: { items: payloadItems, site_url: siteUrl },
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       })
       if(checkoutBtn) checkoutBtn.disabled = false
 
@@ -234,7 +261,7 @@
       showPayState('Error inesperado al iniciar el pago. Inténtalo de nuevo.')
       const subject = 'Pedido carrito — COREDEFENSE'
       const body = `Carrito:\n${lines.join('\n')}\n\nTotal mensual: ${window.CD_CART.formatEUR(total)}\n\nIndica datos de facturación y entorno objetivo.`
-      location.href = `mailto:support@coredefense.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+      location.href = `mailto:supportcoredefense@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
     }
   }
 

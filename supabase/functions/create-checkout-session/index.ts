@@ -26,9 +26,14 @@ function priceId(plan: string): string {
   return ''
 }
 
-Deno.serve(async (req) => {
+const handler = async (req: Request) => {
+  console.log('FUNCTION START')
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
   if (req.method !== 'POST') return new Response('Method Not Allowed', { status: 405, headers: corsHeaders })
+
+  const authHeaderRaw = req.headers.get('Authorization')
+  console.log('AUTH HEADER RAW:', authHeaderRaw)
+  const authHeader = authHeaderRaw || req.headers.get('authorization') || ''
 
   const missing: string[] = []
   ;['SUPABASE_URL', 'SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_ROLE_KEY', 'STRIPE_SECRET_KEY'].forEach((k) => {
@@ -51,13 +56,29 @@ Deno.serve(async (req) => {
   const supabaseUrl = Deno.env.get('SUPABASE_URL') as string
   const supabaseAnon = Deno.env.get('SUPABASE_ANON_KEY') as string
   const supabaseService = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') as string
-  const authHeader = req.headers.get('Authorization') || ''
+  console.log('AUTH HEADER:', authHeader)
+  if (!authHeader) {
+    return new Response(JSON.stringify({ error: 'no_auth_header' }), { status: 401, headers: { ...corsHeaders, 'content-type': 'application/json' } })
+  }
 
-  const userClient = createClient(supabaseUrl, supabaseAnon, { global: { headers: { Authorization: authHeader } } })
+  const userClient = createClient(
+    supabaseUrl,
+    supabaseAnon,
+    {
+      global: {
+        headers: {
+          Authorization: authHeader
+        }
+      }
+    }
+  )
   const adminClient = createClient(supabaseUrl, supabaseService)
 
-  const { data: userData } = await userClient.auth.getUser()
-  const user = userData.user
+  const { data: { user }, error } = await userClient.auth.getUser()
+  console.log('USER:', user)
+  if (error) {
+    return new Response(JSON.stringify({ error: 'auth_required', message: error.message }), { status: 401, headers: { ...corsHeaders, 'content-type': 'application/json' } })
+  }
   if (!user) return new Response(JSON.stringify({ error: 'auth_required' }), { status: 401, headers: { ...corsHeaders, 'content-type': 'application/json' } })
 
   let body: any = null
@@ -116,4 +137,7 @@ Deno.serve(async (req) => {
   }
 
   return new Response(JSON.stringify({ url: session.url, session_id: session.id }), { status: 200, headers: { ...corsHeaders, 'content-type': 'application/json' } })
-})
+}
+
+Deno.serve(handler)
+export default handler

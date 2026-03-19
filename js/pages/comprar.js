@@ -32,6 +32,6 @@ checkout.addEventListener('click',()=>{
   const price = current ? Number(current.dataset.price) : 0
   const subject = `Pedido ${plan.toUpperCase()} — COREDEFENSE`
   const body = `Plan: ${plan}\nUnidades: ${qty}\nPrecio mensual: ${fmt(price)}\nTotal: ${fmt(price*qty)}\n\nPor favor, indícanos datos de facturación y entorno objetivo.`
-  location.href = `mailto:support@coredefense.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+  location.href = `mailto:supportcoredefense@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
 })
 update()

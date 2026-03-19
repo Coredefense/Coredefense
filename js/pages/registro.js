@@ -120,12 +120,17 @@ if(loginForm){
     const pass = String(fd.get('pass')||'')
     const { data, error } = await s.auth.signInWithPassword({ email, password: pass })
     if(error){ msg(explainAuthError(error)); return }
+    let persisted = null
     try{
-      const persisted = await ensurePersistedSession(s, 3000)
+      persisted = await ensurePersistedSession(s, 3000)
       if(debug) console.log('[CD] login session after signIn', persisted.session)
       if(debug) console.log('[CD] login localStorage auth', { hasCustom: persisted.hasCustom, hasSb: persisted.hasSb })
       if(debug) console.log('LOGIN STORAGE:', localStorage)
     }catch(_e){}
+    if(!persisted || !persisted.session){
+      msg('Error guardando sesión, reintenta')
+      return
+    }
     msg('Sesión iniciada')
     if(loginOk){
       loginOk.hidden = false
