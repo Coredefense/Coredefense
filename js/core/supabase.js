@@ -3,15 +3,21 @@
     window.CD_DB_READY = {}
     window.CD_DB_READY.promise = new Promise((resolve)=>{ window.CD_DB_READY.resolve = resolve })
   }
+  function resolveDbReadyOnce(value){
+    if(window.CD_DB_READY && window.CD_DB_READY.resolve){
+      window.CD_DB_READY.resolve(value)
+      window.CD_DB_READY.resolve = null
+    }
+  }
   const url = String(window.CD_SUPABASE_URL || '').trim()
   const key = String(window.CD_SUPABASE_ANON_KEY || '').trim()
   if(!url || !key){
-    if(window.CD_DB_READY && window.CD_DB_READY.resolve) window.CD_DB_READY.resolve(null)
+    resolveDbReadyOnce(null)
     return
   }
-  if(window.CD_DB_INIT === true) return
+  if(window.CD_DB_INIT === true && window.CD_DB && window.CD_DB.client) return
   if(window.CD_DB && window.CD_DB.client){
-    if(window.CD_DB_READY && window.CD_DB_READY.resolve) window.CD_DB_READY.resolve(window.CD_DB.client)
+    resolveDbReadyOnce(window.CD_DB.client)
     return
   }
   window.CD_DB_INIT = true
@@ -44,13 +50,13 @@
       createClient = mod && typeof mod.createClient === 'function' ? mod.createClient : null
     }catch(_e){
       window.CD_DB_INIT = false
-      if(window.CD_DB_READY && window.CD_DB_READY.resolve) window.CD_DB_READY.resolve(null)
+      resolveDbReadyOnce(null)
       return
     }
   }
   if(!createClient){
     window.CD_DB_INIT = false
-    if(window.CD_DB_READY && window.CD_DB_READY.resolve) window.CD_DB_READY.resolve(null)
+    resolveDbReadyOnce(null)
     return
   }
   try{
@@ -71,7 +77,7 @@
       }
     })
     window.CD_DB = { client }
-    if(window.CD_DB_READY && window.CD_DB_READY.resolve) window.CD_DB_READY.resolve(client)
+    resolveDbReadyOnce(client)
     window.dispatchEvent(new CustomEvent('cd:db:ready'))
 
     try{
@@ -108,6 +114,6 @@
     }
   }catch(_e){
     window.CD_DB_INIT = false
-    if(window.CD_DB_READY && window.CD_DB_READY.resolve) window.CD_DB_READY.resolve(null)
+    resolveDbReadyOnce(null)
   }
 })()
