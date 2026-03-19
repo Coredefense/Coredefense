@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Comprar — COREDEFENSE</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="assets/logo.png" sizes="256x256">
+  <link rel="apple-touch-icon" href="assets/logo.png">
+  <meta name="theme-color" content="#0b0f12">
+  <meta property="og:title" content="Comprar — COREDEFENSE">
+  <meta property="og:description" content="Selecciona tu plan de bots de pentesting automatizados.">
+  <meta property="og:image" content="assets/banner.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages/comprar.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-logo"></span>
+        <span class="brand-name">COREDEFENSE</span>
+      </a>
+      <nav class="nav" aria-label="Navegación principal">
+        <a href="index.html#quienes">Quienes somos</a>
+        <a href="index.html#objetivo">Objetivo</a>
+        <a href="index.html#herramientas">Herramientas</a>
+        <a href="index.html#precios">Precios</a>
+        <a href="index.html#contacto" class="cta-link">Contacto</a>
+        <a href="comprar.html" class="cart-link" aria-label="Ver carrito">
+          <svg class="cart-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h3l2 10h9l2-7H8" fill="none" stroke="#00e0ff" stroke-width="1.6"/></svg>
+          <span>Carrito</span>
+          <span id="cart-count" class="cart-badge">0</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+  <main>
+  <section class="section">
+    <div class="container">
+      <h2>Compra tu plan</h2>
+      <p>Selecciona el plan y completa la compra. El carrito calcula el total y prepara el pedido.</p>
+      <div id="pay-state" class="pay-state" hidden></div>
+      <div class="cart-grid">
+        <div>
+          <div id="empty" class="empty-state" hidden>
+            Tu carrito está vacío. Añade planes desde la sección Precios.
+            <div style="margin-top:12px"><a href="index.html#precios" class="btn btn-outline">Ver planes</a></div>
+          </div>
+          <div id="cart-items" class="cart-items"></div>
+        </div>
+        <div class="cart-summary">
+          <div class="summary-header">Resumen</div>
+          <div class="summary-row"><span>Artículos</span><span id="sum-count">0</span></div>
+          <div class="summary-total"><span>Total mensual</span><span id="sum-total">€0</span></div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-secondary" id="clear">Vaciar</button>
+            <button class="btn btn-primary" id="checkout">Continuar</button>
+          </div>
+          <p class="legal">La compra implica autorización de pruebas en tu entorno y uso responsable de los bots.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  </main>
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="brand-logo"></span>
+        <span>COREDEFENSE</span>
+      </div>
+      <div class="footer-links">
+        <a href="index.html#quienes">Quienes somos</a>
+        <a href="index.html#herramientas">Herramientas</a>
+        <a href="index.html#precios">Precios</a>
+        <a href="privacidad.html">Privacidad</a>
+      </div>
+      <p class="copyright">© 2026 COREDEFENSE. Seguridad ofensiva responsable.</p>
+    </div>
+  </footer>
+  <script src="js/config.js"></script>
+  <script src="js/core/supabase.js"></script>
+  <script src="js/core/toast.js"></script>
+  <script src="js/core/cart.js"></script>
+  <script src="js/core/auth-ui.js"></script>
+  <script src="js/core/cookies-consent.js"></script>
+  <script src="js/pages/cart.js"></script>
+  <script src="js/pages/stripe-return.js"></script>
+  <script>
+    // Inicializar badge y renderizado manual si es necesario
+    document.addEventListener('DOMContentLoaded', () => {
+      if(window.CD_CART && window.CD_CART.attachHeaderBadge) {
+        window.CD_CART.attachHeaderBadge();
+      }
+    });
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "COREDEFENSE",
+    "url": "",
+    "logo": "assets/logo.png"
+  }
+  </script>
+</body>
+</html>

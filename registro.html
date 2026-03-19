@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Registro — COREDEFENSE</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="assets/logo.png" sizes="256x256">
+  <link rel="apple-touch-icon" href="assets/logo.png">
+  <meta name="theme-color" content="#0b0f12">
+  <meta property="og:title" content="Registro — COREDEFENSE">
+  <meta property="og:description" content="Crea tu cuenta para gestionar bots de pentesting automatizados.">
+  <meta property="og:image" content="assets/banner.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages/registro.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-logo"></span>
+        <span class="brand-name">COREDEFENSE</span>
+      </a>
+      <nav class="nav" aria-label="Navegación principal">
+        <a href="index.html#quienes">Quienes somos</a>
+        <a href="index.html#precios">Precios</a>
+        <a href="comprar.html" class="cta-link">Comprar</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+  <section class="section">
+    <div class="container">
+      <div class="auth-page">
+        <div class="auth-shell glow-border">
+          <div class="auth-head">
+            <h2>Tu cuenta</h2>
+            <p>Inicia sesión para continuar, o crea una cuenta en segundos.</p>
+          </div>
+          <div class="auth-tabs" role="tablist" aria-label="Cuenta">
+            <button class="auth-tab is-active" type="button" role="tab" aria-selected="true" data-auth-tab="login">Iniciar sesión</button>
+            <button class="auth-tab" type="button" role="tab" aria-selected="false" data-auth-tab="register">Crear cuenta</button>
+          </div>
+
+          <div class="auth-panels">
+            <div class="auth-panel" data-auth-panel="login">
+              <form id="loginForm" class="register-form">
+                <div class="form-row">
+                  <label for="login-email">Correo</label>
+                  <input id="login-email" type="email" name="email" placeholder="tu@empresa.com" autocomplete="email" required>
+                </div>
+                <div class="form-row">
+                  <label for="login-pass">Contraseña</label>
+                  <input id="login-pass" type="password" name="pass" placeholder="Tu contraseña" autocomplete="current-password" required>
+                </div>
+                <button class="btn btn-primary" type="submit">Entrar</button>
+              </form>
+              <div id="loginOk" class="register-ok" hidden></div>
+              <div class="auth-switch">
+                ¿No tienes cuenta?
+                <button class="auth-link" type="button" data-auth-tab="register">Crear cuenta</button>
+              </div>
+            </div>
+
+            <div class="auth-panel" data-auth-panel="register" hidden>
+              <form id="registerForm" class="register-form">
+                <div class="form-row">
+                  <label for="reg-nombre">Nombre</label>
+                  <input id="reg-nombre" type="text" name="nombre" placeholder="Tu nombre" autocomplete="name" required>
+                </div>
+                <div class="form-row">
+                  <label for="reg-email">Correo</label>
+                  <input id="reg-email" type="email" name="email" placeholder="tu@empresa.com" autocomplete="email" required>
+                </div>
+                <div class="form-row">
+                  <label for="reg-empresa">Empresa</label>
+                  <input id="reg-empresa" type="text" name="empresa" placeholder="Nombre de empresa" autocomplete="organization">
+                </div>
+                <div class="form-row">
+                  <label for="reg-pass">Contraseña</label>
+                  <input id="reg-pass" type="password" name="pass" placeholder="Mínimo 8 caracteres" autocomplete="new-password" required>
+                </div>
+                <div class="form-row">
+                  <label for="reg-pass2">Repite la contraseña</label>
+                  <input id="reg-pass2" type="password" name="pass2" placeholder="Confirma contraseña" autocomplete="new-password" required>
+                </div>
+                <button class="btn btn-primary" type="submit">Crear cuenta</button>
+                <p class="contact-legal">Al registrarte aceptas el uso responsable del servicio.</p>
+              </form>
+              <div id="registerOk" class="register-ok" hidden></div>
+              <div class="auth-switch">
+                ¿Ya tienes cuenta?
+                <button class="auth-link" type="button" data-auth-tab="login">Iniciar sesión</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  </main>
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="brand-logo"></span>
+        <span>COREDEFENSE</span>
+      </div>
+      <div class="footer-links">
+        <a href="index.html#quienes">Quienes somos</a>
+        <a href="index.html#precios">Precios</a>
+        <a href="privacidad.html">Privacidad</a>
+      </div>
+      <p class="copyright">© 2026 COREDEFENSE. Seguridad ofensiva responsable.</p>
+    </div>
+  </footer>
+  <script src="js/config.js"></script>
+  <script src="js/core/supabase.js"></script>
+  <script src="js/core/toast.js"></script>
+  <script src="js/core/auth-ui.js"></script>
+  <script src="js/core/cookies-consent.js"></script>
+  <script src="js/pages/registro.js"></script>
+</body>
+</html>

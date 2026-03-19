@@ -1,0 +1,38 @@
+Setup de Base de Datos (Supabase)
+
+1) Crea un proyecto en Supabase
+   - Entra a Supabase y crea un nuevo proyecto.
+   - Guarda: Project URL y Anon public key.
+
+2) Configura la web para conectarse
+   - Abre: js/config.js
+   - Rellena:
+     window.CD_SUPABASE_URL = "TU_PROJECT_URL"
+     window.CD_SUPABASE_ANON_KEY = "TU_ANON_PUBLIC_KEY"
+
+3) Crea las tablas y políticas
+   - Abre el SQL Editor de Supabase.
+   - Pega y ejecuta el archivo: supabase_schema.sql
+
+4) Auth (usuarios)
+   - En Supabase Auth, habilita Email/Password.
+   - Si quieres evitar confirmación por email durante pruebas, desactiva “Confirm email”.
+   - Si activas confirmación por email, el usuario deberá confirmar antes de poder iniciar sesión.
+
+5) Qué queda guardado en la base de datos
+   - Usuarios: Supabase Auth + perfil (nombre/empresa) en tabla profiles (se crea automáticamente).
+   - Compras: al finalizar el carrito (comprar.html), se inserta un pedido en orders (requiere estar logueado).
+   - Contacto: el formulario intenta guardar en contact_messages; si falla, usa mailto como respaldo.
+
+6) Stripe (pasarela de pagos)
+   - Ejecuta el SQL: supabase_stripe_patch.sql
+   - Crea 2 precios en Stripe (Usuario/Empresa) como suscripciones.
+   - Despliega las Edge Functions:
+     - create-checkout-session
+     - stripe-webhook
+   - Define secretos/variables en Supabase Functions:
+     - STRIPE_SECRET_KEY
+     - STRIPE_WEBHOOK_SECRET
+     - STRIPE_PRICE_USUARIO (o STRIPE_PRICE_USER)
+     - STRIPE_PRICE_EMPRESA (o STRIPE_PRICE_COMPANY)
+   - Crea el webhook en Stripe apuntando a la URL pública de stripe-webhook.
